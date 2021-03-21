@@ -1,8 +1,8 @@
 const PIANO = document.querySelector(".piano");
 let pianoKeys = document.querySelectorAll(".piano-key")
-const btnLetters = document.querySelector('.btn-letters');
-const btnNotes = document.querySelector('.btn-notes');
-const addFulscreen = document.querySelector('.fullscreen');
+const btnLetters = document.querySelector('.btn-letters')
+const btnNotes = document.querySelector('.btn-notes')
+const addFulscreen = document.querySelector('.fullscreen')
 let keyPressed = false
 addFulscreen.addEventListener("click", () => {
    if (document.fullscreenElement === null) {
@@ -58,7 +58,26 @@ function addLetters(l1,l2){
       item.classList.remove(subType);
   });
 }
-
+function keyUp(e){
+   let target;
+    if (e == undefined) {
+        return;
+    }
+    if (e.code) {
+        pianoKeys.forEach(item => {
+            if (item.dataset.letter === e.code.replace("Key", "")) {
+                target = item;
+            }
+        });
+    } else if (e) {
+        target = e.target;
+    } else {
+        target = arguments[0].target;
+    }
+    if (target && target.classList.contains("piano-key")) {
+        target.classList.remove("piano-key-active", "piano-key-active-pseudo");
+    }
+}
 btnLetters.addEventListener('click', () => addLetters(btnLetters, btnNotes));
 btnNotes.addEventListener('click', () => addLetters(btnNotes, btnLetters));
 
@@ -67,7 +86,7 @@ window.addEventListener('keydown', (event) => {
    keyPressed = true
    if (event.code) {
        pianoKeys.forEach(item => {
-           if (item.dataset.letter === event.code.replace("Key", "")) {
+           if(item.dataset.letter === event.code.replace("Key", "")) {
                item.classList.add('piano-key-active', "piano-key-active-pseudo")
                const note = item.dataset.note
                const src = `assets/audio/${note}.mp3`
@@ -79,8 +98,6 @@ window.addEventListener('keydown', (event) => {
 window.addEventListener('keyup', (event) => {
    keyPressed = false
    if (event.code) {
-      pianoKeys.forEach(item => {
-              item.classList.remove('piano-key-active', "piano-key-active-pseudo")
-      })
+      keyUp(event)
   }
 })
